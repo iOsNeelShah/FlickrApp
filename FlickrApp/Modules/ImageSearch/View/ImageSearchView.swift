@@ -11,38 +11,48 @@ struct ImageSearchView: View {
     
     @StateObject var viewModel = ImageSearchViewModel(apiService: FlickrAPIService())
     @State private var searchText: String = ""
+    @State private var selectedImage: FlickrImage? = nil
     
     var body: some View {
-        VStack {
-            SearchBar(text: $searchText)
-                .padding()
-                .onChange(of: searchText) { newText in
-                    viewModel.searchImages(for: newText)
-                }
-            
-            if viewModel.isLoading {
-                ProgressView("Loading...")
-                    .progressViewStyle(CircularProgressViewStyle())
+        NavigationView {
+            VStack {
+                SearchBar(text: $searchText)
                     .padding()
+                    .onChange(of: searchText) { newText in
+                        viewModel.searchImages(for: newText)
+                    }
                 
-                Spacer()
-            } else {
-                if viewModel.images.isEmpty && searchText.count > 0 {
-                    Text("No images found")
-                } else {
-                    ScrollView {
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 16) {
-                            ForEach(viewModel.images, id: \.link) { image in
-                                ImageCell(model: image)
-                            }
-                        }
+                if viewModel.isLoading {
+                    ProgressView("Loading...")
+                        .progressViewStyle(CircularProgressViewStyle())
                         .padding()
+                    
+                    Spacer()
+                } else {
+                    if viewModel.images.isEmpty && searchText.count > 0 {
+                        Text("No images found")
+                    } else {
+                        ScrollView {
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 16) {
+                                ForEach(viewModel.images, id: \.id) { image in
+                                    ImageCell(model: image)
+                                        .onTapGesture {
+                                            selectedImage = image
+                                        }
+                                }
+                            }
+                            .padding()
+                        }
                     }
                 }
+                Spacer()
             }
-            Spacer()
+            .navigationTitle("Flickr Search")
+            .navigationBarTitleDisplayMode(.inline)
+            .sheet(item: $selectedImage) { data in
+                DetailScreen(model: data)
+            }
         }
-        .navigationTitle("Flickr Search")
     }
 }
 

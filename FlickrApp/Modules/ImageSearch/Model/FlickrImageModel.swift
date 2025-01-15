@@ -16,7 +16,8 @@ struct FlickrAPIResponse: Codable {
     let items: [FlickrImage]
 }
 
-struct FlickrImage: Codable {
+struct FlickrImage: Codable, Identifiable {
+    var id: String { link } 
     let title: String
     let link: String
     let media: [String: String]

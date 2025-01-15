@@ -22,5 +22,7 @@ struct FlickrImage: Codable {
     let media: [String: String]
     let description: String
     let author: String
-    let date_taken: String
+    let published: String
+    let author_id: String
+    let tags: String
 }

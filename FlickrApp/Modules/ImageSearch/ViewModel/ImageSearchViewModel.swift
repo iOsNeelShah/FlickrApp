@@ -8,8 +8,9 @@
 import Foundation
 
 class ImageSearchViewModel: ObservableObject {
-    @Published var images: [FlickrImage] = []
+    @Published var images: [FlickrImage]?
     @Published var isLoading = false
+    @Published var showError = false
     
     private let apiService: APIService
     
@@ -20,6 +21,7 @@ class ImageSearchViewModel: ObservableObject {
     func searchImages(for query: String) {
         guard !query.isEmpty else { return }
         isLoading = true
+        showError = false
         
         apiService.fetchImages(for: query) { [weak self] result in
             DispatchQueue.main.async {
@@ -29,8 +31,9 @@ class ImageSearchViewModel: ObservableObject {
                 case .success(let images):
                     self?.images = images
                 case .failure(let error):
+                    self?.showError = true
                     print("Error fetching images: \(error.localizedDescription)")
-                    self?.images = []
+                    self?.images = nil
                 }
             }
         }

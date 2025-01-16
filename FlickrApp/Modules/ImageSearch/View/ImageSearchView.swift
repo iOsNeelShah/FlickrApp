@@ -29,12 +29,14 @@ struct ImageSearchView: View {
                     
                     Spacer()
                 } else {
-                    if viewModel.images.isEmpty && searchText.count > 0 {
+                    if viewModel.showError {
+                        Text("Something went wrong! Please try again")
+                    } else if viewModel.images?.isEmpty ?? true && searchText.count > 0 {
                         Text("No images found")
                     } else {
                         ScrollView {
                             LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 16) {
-                                ForEach(viewModel.images, id: \.id) { image in
+                                ForEach(viewModel.images ?? [], id: \.id) { image in
                                     ImageCell(model: image)
                                         .onTapGesture {
                                             selectedImage = image

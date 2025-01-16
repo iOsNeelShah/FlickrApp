@@ -10,6 +10,7 @@ import SDWebImageSwiftUI
 
 struct DetailScreen: View {
     let model: FlickrImage
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationView {
@@ -50,13 +51,17 @@ struct DetailScreen: View {
             }
             .navigationTitle("Image Detail")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarItems(trailing: Button("Close") {
+                DispatchQueue.main.async {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }.foregroundStyle(.white))
         }
     }
     
-    // Helper function to format the date
     private func formattedDate(_ dateString: String) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ" // This might vary depending on the date format in the response
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         if let date = formatter.date(from: dateString) {
             formatter.dateStyle = .long
             formatter.timeStyle = .short
